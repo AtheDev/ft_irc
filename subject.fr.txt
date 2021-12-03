@@ -1,0 +1,151 @@
+*********************************
+***** Instructions communes *****
+*********************************
+
+    - Votre programme ne doit en aucun cas planter (même s'il manque de mémoire) et ne doit pas s'arrêter inopinément.
+Si cela se produit, votre projet sera considéré comme non fonctionnel et recevra un 0 lors de l'évaluation.
+
+    - Si le sujet le requiert, vous devez soumettre un Makefile qui compilera vos fichiers sources vers la sortie requise. Votre Makefile ne doit pas être relinké.
+    - Votre Makefile doit au moins contenir les règles $(NAME), all, clean, fclean et re.
+    
+    - Nous vous encourageons à créer des programmes de test pour votre projet, même si ce travail n'aura pas à être soumis et ne sera pas noté. 
+Cela vous donnera une chance de tester facilement votre travail et celui de vos camarades.
+Vous trouverez ces tests particulièrement utiles lors de votre soutenance.
+En effet, lors de la soutenance, vous êtes libre d'utiliser vos tests et/ou les tests du pair que vous évaluez.
+
+
+************************
+***** Introduction *****
+************************
+
+Internet Relay Chat ou IRC est un protocole de communication textuelle sur Internet.
+Il s'agit communication instantanée, principalement sous la forme de discussions en groupe via des canaux de discussion, mais peut également être utilisée pour des communications individuelles.
+Les programmes clients IRC se connectent à un serveur IRC pour accéder à un canal spécifique.
+Les serveurs IRC sont connectés entre eux pour fournir un réseau global avec des canaux uniques.
+
+
+
+******************************
+***** Partie obligatoire *****
+******************************
+
+- Vous devez écrire un serveur IRC en C++ 98.
+- Si vous avez besoin de plus de fonctions C, vous pouvez les utiliser mais préférez toujours le C++.
+- Le standard C++ doit être C++ 98. Votre projet doit compiler avec lui.
+- Pas de bibliothèque externe, pas de Boost, etc...
+- Essayez de toujours utiliser le code le plus "C++" possible (par exemple, utilisez <cstring> plutôt que <string.h>).
+- Dans le sujet et le barème nous mentionnerons poll mais vous pouvez utiliser des équivalents comme select, kqueue, epoll.
+- La communication entre le client et le serveur doit se faire via TCP/IP(v4) ou (v6)
+- Vous n'aurez pas besoin de coder un client
+- Vous n'aurez pas besoin de gérer la communication entre serveurs.
+- Votre exécutable sera utilisé comme suit :
+
+=> $>./ircserv [host:port_network:password_network] <port> <password>
+
+        ◦ host              = le nom d'hôte sur lequel IRC doit se connecter pour rejoindre un réseau déjà existant.
+        ◦ port_réseau       = le port du serveur sur lequel l'IRC doit se connecter sur l'hôte.
+        ◦ password_network  = le mot de passe nécessaire pour se connecter à l'hôte.
+        ◦ port              = le numéro de port sur lequel votre serveur acceptera les connexions entrantes.
+        ◦ password          = le mot de passe nécessaire à tout client IRC souhaitant se connecter à votre serveur.
+
+    ◦ Si host, port_network et password_network ne sont pas indiqués, vous devez créer un nouveau réseau IRC
+
+- Le serveur doit être capable de traiter plusieurs clients en même temps et de ne jamais suspendre.
+Le forking n'est pas autorisé, toutes les opérations d'entrée/sortie doivent être non bloquantes et utiliser seulement 1 poll (ou équivalent) pour tout (lecture, écriture, mais aussi écoute, ...)
+
+
+        ===== INFO =====
+        Nous vous avons laissé utiliser fcntl parce que MacOS X n'implémente pas l'écriture de la même manière que les autres systèmes d'exploitation Unix.
+        Vous devez utiliser FD non-bloquant pour avoir un résultat similaire aux autres OS.
+
+        ===== ATTENTION =====
+        Parce que vous utilisez FD non bloquant, vous pouvez utiliser les fonctions read/recv ou fonctions write/send sans poll (ou équivalent) et votre serveur ne sera pas bloquant. Mais cela consommerait plus de ressources système.
+        Donc, une fois de plus, essayer de lire/récupérer ou d'écrire/envoyer dans n'importe quel FD sans passer par un poll (ou équivalent) vous donnera une note égale à 0 et la fin de l'évaluation.
+
+        Vous ne pouvez utiliser fcntl que comme suit : fcntl(fd, F_SETFL, O_NONBLOCK) ;
+        Tout autre drapeau est interdit.
+
+
+
+
+- On attend bien sûr de vous que vous construisiez un code propre. Vérifiez absolument chaque erreur et dans les cas où vous pourriez avoir un problème (données partielles reçues, bande passante faible...).
+- Pour vérifier que votre serveur utilise correctement tout ce que vous envoyez, un premier test peut être effectué avec nc (utilisez ctrl+d pour envoyer des parties de la commande) :
+
+    =>  \$> nc 127.0.0.1 6667
+          com^Dman^Dd
+        \$>
+Cela vous permettra d'envoyer d'abord les lettres com, man, d\n. Vous devez d'abord agréger les paquets afin de reconstruire la commande pour la traiter.
+
+- Plusieurs clients IRC existent ; vous devez en choisir un comme référence et il sera utilisé pendant la défense.
+- Pour être compatible avec ce client, vous devrez implémenter au moins une partie de la la RFC officielle de l'IRC.
+- L'utilisation du client sur votre serveur doit être identique à celle de n'importe quel serveur IRC officiel. pour être sûr, nous allons énumérer les fonctionnalités minimales requises.
+- Vous devez pouvoir connecter le client de référence à votre serveur sans produire d'erreur.
+- Vous devez pouvoir vous authentifier, définir un surnom, un nom d'utilisateur, rejoindre un canal, envoyer et recevoir des messages privés en utilisant ce client.
+- Tous les messages d'un client sur un canal sont envoyés à tous les autres clients du canal.
+- Vous devez avoir des opérateurs et des utilisateurs réguliers.
+- Quelques actions/commandes spécifiques aux opérateurs.
+
+
+******************************
+***** Fonctions externes *****
+******************************
+
+Everything in C++ 98
+
+socket
+
+setsockopt
+
+getsockname
+
+getprotobyname
+
+gethostbyname
+
+getaddrinfo
+
+freeaddrinfo
+
+bind
+
+connect
+
+listen
+
+accept
+
+htons
+
+htonl
+
+ntohs
+
+ntohl
+
+inet_addr
+
+inet_ntoa
+
+send
+
+recv
+
+signal
+
+lseek
+
+fstat
+
+fcntl
+
+poll (or equivalent)
+
+
+
+
+https://ircgod.com/
+
+https://fr.wikipedia.org/wiki/Internet_Relay_Chat
+https://fr.wikipedia.org/wiki/IrcOp
+https://fr.wikipedia.org/wiki/Netsplit
+https://fr.wikipedia.org/wiki/Direct_client-to-client
