@@ -141,11 +141,17 @@ fcntl
 poll (or equivalent)
 
 
+int fcntl(int fd, int cmd);
+int fcntl(int fd, int cmd, long arg);
+int fcntl(int fd, int cmd, struct flock *lock);
+Vous ne pouvez utiliser fcntl que comme suit : fcntl(fd, F_SETFL, O_NONBLOCK);
+    => permet d'effectuer des operations sur le descripteur de fichier fd
+    => operation determinee par la valeur de l'argument cmd
 
+    F_SETFL :   Positionner les nouveaux attributs d'état pour le fichier à la valeur indiquée par arg.
+                Les modes d'accès au fichier (O_RDONLY, O_WRONLY, O_RDWR) et les attributs de création du fichier
+                (c'est-à-dire O_CREAT, O_EXCL, O_NOCTTY, O_TRUNC) dans arg sont ignorés.
+                Sous Linux, cette commande ne peut changer que les attributs
+                    O_APPEND, O_ASYNC, O_DIRECT, O_NOATIME et O_NONBLOCK.
 
-https://ircgod.com/
-
-https://fr.wikipedia.org/wiki/Internet_Relay_Chat
-https://fr.wikipedia.org/wiki/IrcOp
-https://fr.wikipedia.org/wiki/Netsplit
-https://fr.wikipedia.org/wiki/Direct_client-to-client
+Si un processus essaie d'effectuer un accès incompatible (par exemple, read(2) ou write(2)) sur la région d'un fichier qui a un verrou impératif incompatible, le résultat dépendra de si l'attribut O_NONBLOCK est activé pour cette description de fichier ouvert. Si l'attribut O_NONBLOCK n'est pas activé, l'appel système bloquera jusqu'à ce que le verrou soit enlevé ou converti en un mode compatible avec l'accès. Si l'attribut O_NONBLOCK est activé, l'appel système échouera avec l'erreur EAGAIN ou EWOULDBLOCK.
