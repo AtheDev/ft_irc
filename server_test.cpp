@@ -11,7 +11,7 @@
 #include <vector>
 
 #include "client.hpp"
-#include "server.hpp"
+//#include "server.hpp"
 
 
 #define PORT "6667"

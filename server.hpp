@@ -19,8 +19,14 @@
 #include <netdb.h>
 #include <cstring>
 #include <unistd.h>
+#include <vector>
+#include <poll.h>
+#include "client.hpp"
+
 
 #define BACKLOG 10
+
+class Client;
 
 class   Server
 {
@@ -31,6 +37,8 @@ class   Server
         //Server(Server const & cpy) {}
         //Server &    operator=(Server const & rhs){}
         ~Server();
+
+        void    run(void);
 
         class ErrorGetAddrInfoException : public std::exception {
             public:
@@ -59,15 +67,23 @@ class   Server
 
     private:
 
-        struct addrinfo     _hints;
-        struct addrinfo *   _result;
+        struct addrinfo             _hints;
+        struct addrinfo *           _result;
         
-        int                 _socketfd;
-        std::string         _port;
-        std::string         _password;
-        
-        
+        int                         _socketfd;
+        struct pollfd               _pollfdServer;
 
+        std::string                 _port;
+        std::string                 _password;
+
+        std::vector<Client>         _arrayClient;
+        int                         _nbClient;
+
+        std::vector<struct pollfd>  _arrayPollFd;
+        int                         _nbPollFd;
+        
+        socklen_t                   _sizeSockAddrIn;
+        
 };
 
 #endif

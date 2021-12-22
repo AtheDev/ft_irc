@@ -12,7 +12,7 @@
 
 #include "server.hpp"
 
-Server::Server(std::string port, std::string password): _port(port), _password(password) {
+Server::Server(std::string port, std::string password): _port(port), _password(password), _nbPollFd(0), _nbClient(0) {
     std::cout << "Server opened" << std::endl;
     std::cout << "port : " << _port << std::endl << "password : " << _password << std::endl;
 
@@ -37,12 +37,27 @@ Server::Server(std::string port, std::string password): _port(port), _password(p
 
     if (listen(_socketfd, BACKLOG) == -1) // attend la connexion
         throw Server::ErrorListenException();
+    
+    _pollfdServer.fd = _socketfd;
+    _pollfdServer.events = POLLIN;
+    _arrayPollFd.push_back(_pollfdServer);
+
+    _nbPollFd = 1;
+    _sizeSockAddrIn = sizeof(struct sockaddr_in);
 }
 
 Server::~Server() {
     std::cout << "Server closed" << std::endl;
     close(_socketfd);
     freeaddrinfo(_result);
+}
+
+void            Server::run(void) {
+
+    while (1)
+    {
+       poll() 
+    }
 }
 
 const char *    Server::ErrorGetAddrInfoException::what() const throw() {

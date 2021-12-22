@@ -13,26 +13,33 @@
 #ifndef CLIENT_HPP
 # define CLIENT_HPP
 
+#include <unistd.h>
+#include <poll.h>
+
 class Client
 {
     public:
 
         // creation d'un client a chaque nouvelle connexion
-        //Client();
+        Client();
         Client(int fd);
         Client(Client const & cpy);
-        //~Client();
+        ~Client();
 
         int getClientFd(void);
 
+        void            setPollFdClient(void);
+        struct pollfd   getPollFdClient(void) const;
+
     private:
 
-        // Ne doit pas etre instancie oar copie ou assignation
-        Client();
+        // Ne doit pas etre instancie par copie ou assignation
+        //Client();
         //Client(Client const & cpy);
         Client &    operator=(Client const & rhs);
 
-        int _clientfd;
+        int             _clientfd;
+        struct pollfd   _pollFdClient;
 
 };
 

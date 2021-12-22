@@ -24,6 +24,7 @@ int main(int ac, char **av)
     try {
 
         Server server(static_cast<std::string>(av[1]), static_cast<std::string>(av[2]));
+        server.run();
     }
     catch (Server::ErrorGetAddrInfoException & e) {
         std::cout << e.what() << std::endl;
