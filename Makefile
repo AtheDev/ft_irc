@@ -1,7 +1,7 @@
 NAME_SERVER = server
 NAME_CLIENT = client
 
-SRCS_SERVER = server_test.cpp server.cpp client.cpp
+SRCS_SERVER = main.cpp server.cpp client.cpp message.cpp
 SRCS_CLIENT = client_test.cpp
 
 OBJS_SERVER = $(SRCS_SERVER:.cpp=.o)
@@ -9,7 +9,7 @@ OBJS_CLIENT = $(SRCS_CLIENT:.cpp=.o)
 
 CXX = clang++
 
-CXXFLAGS = -Wall -Wextra -Werror
+CXXFLAGS = -Wall -Wextra 
 
 RM = rm -rf
 

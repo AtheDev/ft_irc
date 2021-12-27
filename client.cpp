@@ -42,18 +42,16 @@ POLLUP : le correspondant a ferrme la connexion(uniquement en sortie)
 
 #include "client.hpp"
 
-Client::Client(): _clientfd(0) {}
-
 Client::Client(int fd): _clientfd(fd) {}
-
-Client::Client(Client const & cpy): _clientfd(cpy._clientfd) {}
 
 Client::~Client() {
     if (_clientfd != 0)
         close(_clientfd);
 }
 
-int     Client::getClientFd(void) { return _clientfd; }
+int     Client::getClientFd(void) const { return _clientfd; }
+
+void    Client::setClientFd(int fd) { _clientfd = fd; }
 
 void    Client::setPollFdClient(void) {
 

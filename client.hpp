@@ -15,29 +15,33 @@
 
 #include <unistd.h>
 #include <poll.h>
+#include <iostream>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
+#include <fcntl.h>
 
 class Client
 {
     public:
 
-        // creation d'un client a chaque nouvelle connexion
-        Client();
         Client(int fd);
-        Client(Client const & cpy);
         ~Client();
 
-        int getClientFd(void);
+        int             getClientFd(void) const;
+        void            setClientFd(int fd);
 
         void            setPollFdClient(void);
         struct pollfd   getPollFdClient(void) const;
 
+
     private:
 
-        // Ne doit pas etre instancie par copie ou assignation
-        //Client();
-        //Client(Client const & cpy);
+        // Ne doit pas etre instancie par copie ou assignation ou par defaut
+        Client();
+        Client(Client const & cpy);
         Client &    operator=(Client const & rhs);
-
+        
         int             _clientfd;
         struct pollfd   _pollFdClient;
 

@@ -14,6 +14,12 @@
 #include "client.hpp"
 #include <iostream>
 
+void	handler_signal(int num)
+{
+	(void)num;
+    throw Server::ErrorSignalException();
+}
+
 int main(int ac, char **av)
 {
     if (ac != 3)
@@ -39,6 +45,12 @@ int main(int ac, char **av)
         std::cout << e.what() << std::endl;
     }
     catch (Server::ErrorListenException & e) {
+        std::cout << e.what() << std::endl;
+    }
+    catch (Server::ErrorSignalException & e) {
+        std::cout << e.what() << std::endl;
+    }
+    catch (Server::ErrorPollException & e) {
         std::cout << e.what() << std::endl;
     }
 
